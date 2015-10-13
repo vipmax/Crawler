@@ -1,0 +1,20 @@
+<project name="Crawler" default="build">
+
+    <target name="build">
+        <exec executable="mvn">
+            <arg value="clean"/>
+            <arg value="install"/>
+        </exec>
+    </target>
+
+    <target name="copy jars to slaves">
+        <exec executable="scp">
+            <arg value="target/SNA-1.0.jar"/>
+            <arg value="ubuntu@slave1:/home/ubuntu/Desktop/Crawler/target"/>
+        </exec>
+        <exec executable="scp">
+            <arg value="target/SNA-1.0.jar"/>
+            <arg value="ubuntu@slave2:/home/ubuntu/Desktop/Crawler/target"/>
+        </exec>
+    </target>
+</project>
