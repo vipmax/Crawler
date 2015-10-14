@@ -8,6 +8,6 @@ import org.apache.mesos.MesosExecutorDriver
 object CrawlerTaskExecutor {
 
   def main(args: Array[String]) {
-    new MesosExecutorDriver(new CrawlerExecutor).run()
+    new MesosExecutorDriver(new CrawlerExecutor(args)).run()
   }
 }

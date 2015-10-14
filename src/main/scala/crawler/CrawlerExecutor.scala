@@ -1,12 +1,13 @@
 package crawler
 
+import com.google.protobuf.ByteString
 import org.apache.mesos.Protos._
 import org.apache.mesos.{Executor, ExecutorDriver}
 
 /**
  * Created by Max Petrov on 12.10.15.
  */
-class CrawlerExecutor extends Executor {
+class CrawlerExecutor(args: Array[String]) extends Executor {
   override def shutdown(driver: ExecutorDriver): Unit = {}
 
   override def disconnected(driver: ExecutorDriver): Unit = {}
@@ -22,12 +23,18 @@ class CrawlerExecutor extends Executor {
   override def registered(driver: ExecutorDriver, executorInfo: ExecutorInfo, frameworkInfo: FrameworkInfo, slaveInfo: SlaveInfo): Unit = {}
 
   override def launchTask(driver: ExecutorDriver, task: TaskInfo): Unit = {
-
+    new Thread(new Runnable {
+      override def run(): Unit = {
         driver.sendStatusUpdate(TaskStatus.newBuilder().setTaskId(task.getTaskId).setState(TaskState.TASK_RUNNING).build())
 
         println(s"Crawler task ${task.getTaskId} is running")
+        println("Got fom master " + args.mkString)
 
-        driver.sendStatusUpdate(TaskStatus.newBuilder().setTaskId(task.getTaskId).setState(TaskState.TASK_FINISHED).build())
+        val data = ByteString.copyFrom(s"result from task ${task.getTaskId.getValue}".getBytes)
+        driver.sendStatusUpdate(TaskStatus.newBuilder().setTaskId(task.getTaskId).setState(TaskState.TASK_FINISHED).setData(data).build())
+
+      }
+    }).start()
 
   }
 }

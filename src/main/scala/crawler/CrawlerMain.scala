@@ -20,7 +20,7 @@ object CrawlerMain {
       build()
 
     val scheduler = new CrawlerScheduler
-    val masterUrl: String = "192.168.56.104:5050"
+    val masterUrl: String = "192.168.0.31:5050"
 
     new MesosSchedulerDriver(scheduler, framework, masterUrl).run()
   }
