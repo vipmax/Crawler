@@ -1,9 +1,7 @@
 package crawler
 
-import com.mongodb.casbah.MongoClient
-import com.mongodb.casbah.commons.MongoDBObject
 import twitter4j.conf.ConfigurationBuilder
-import twitter4j.{Paging, TwitterFactory}
+import twitter4j.{Query, TwitterFactory}
 
 import scala.collection.JavaConverters._
 
@@ -24,20 +22,21 @@ object TwitterTest {
 
     val twitter = new TwitterFactory(cb.build()).getInstance()
 
-    val tweets = twitter.getUserTimeline(new Paging(1, 5)).asScala
+    //    val tweets = twitter.getUserTimeline(new Paging(1, 5)).asScala
+    val tweets = twitter.search(new Query("IGIL").count(100)).getTweets.asScala
     tweets.foreach(println)
 
-    val mongoClient = MongoClient("localhost", 27017)
-    val db = mongoClient("test")
-    val testCollection = db.getCollection("tweets")
-    for (tweet <- tweets) {
-      println("inserting " + ("tweet" -> tweet.getText))
-      testCollection.insert(MongoDBObject("tweet" -> tweet.getText))
-    }
-
-    val allDocs = testCollection.find()
-    println("All collection 'tweets'")
-    println(allDocs.toArray.asScala.mkString("\n"))
+    //    val mongoClient = MongoClient("localhost", 27017)
+    //    val db = mongoClient("test")
+    //    val testCollection = db.getCollection("tweets")
+    //    for (tweet <- tweets) {
+    //      println("inserting " + ("tweet" -> tweet.getText))
+    //      testCollection.insert(MongoDBObject("tweet" -> tweet.getText))
+    //    }
+    //
+    //    val allDocs = testCollection.find()
+    //    println("All collection 'tweets'")
+    //    println(allDocs.toArray.asScala.mkString("\n"))
 
 
   }
