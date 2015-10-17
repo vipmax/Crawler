@@ -1,9 +1,12 @@
 package crawler
 
+import java.io.File
+
 import twitter4j.conf.ConfigurationBuilder
 import twitter4j.{Query, TwitterFactory}
 
 import scala.collection.JavaConverters._
+import scala.io.Source
 
 /**
  * Created by Max Petrov on 15.10.15.
@@ -12,19 +15,20 @@ object TwitterTest {
   def main(args: Array[String]) {
     println("Twitter test")
 
+    new File("/Crawler/resources/twitterCreds").listFiles().foreach(file => {println(file); Source.fromFile(file).getLines().foreach(println)})
 
-    val cb = new ConfigurationBuilder()
-    cb.setDebugEnabled(true)
-      .setOAuthConsumerKey("WTCtWipd1HPyi0g8WPkyPr6rN")
-      .setOAuthConsumerSecret("dhGfb2a4b2Ur5MRRe9xFwHxfWJEold3EH3damrw0vocNIVXEJI")
-      .setOAuthAccessToken("3142277661-rLc76RaBTizQL817WY5AKrKAuJpMjeCEYBUeKma")
-      .setOAuthAccessTokenSecret("gMvYWDnpNedZ2r9PoEHY9h2eNgOiVFQPenPgZEfXBjtpb")
-
-    val twitter = new TwitterFactory(cb.build()).getInstance()
-
-    //    val tweets = twitter.getUserTimeline(new Paging(1, 5)).asScala
-    val tweets = twitter.search(new Query("IGIL").count(100)).getTweets.asScala
-    tweets.foreach(println)
+//    val cb = new ConfigurationBuilder()
+//    cb.setDebugEnabled(true)
+//      .setOAuthConsumerKey("WTCtWipd1HPyi0g8WPkyPr6rN")
+//      .setOAuthConsumerSecret("dhGfb2a4b2Ur5MRRe9xFwHxfWJEold3EH3damrw0vocNIVXEJI")
+//      .setOAuthAccessToken("3142277661-rLc76RaBTizQL817WY5AKrKAuJpMjeCEYBUeKma")
+//      .setOAuthAccessTokenSecret("gMvYWDnpNedZ2r9PoEHY9h2eNgOiVFQPenPgZEfXBjtpb")
+//
+//    val twitter = new TwitterFactory(cb.build()).getInstance()
+//
+//    //    val tweets = twitter.getUserTimeline(new Paging(1, 5)).asScala
+//    val tweets = twitter.search(new Query("IGIL").count(100)).getTweets.asScala
+//    tweets.foreach(println)
 
     //    val mongoClient = MongoClient("localhost", 27017)
     //    val db = mongoClient("test")
