@@ -9,7 +9,7 @@ import org.apache.mesos.Protos.FrameworkInfo
 object CrawlerMain {
 
   def main(args: Array[String]) {
-    println("Starting crawler")
+    println("Starting crawler at " + args(0))
 
     val framework = FrameworkInfo.newBuilder.
       setName("crawler").
@@ -20,7 +20,7 @@ object CrawlerMain {
       build()
 
     val scheduler = new CrawlerScheduler
-    val masterUrl: String = "127.0.0.1:5050"
+    val masterUrl: String = args(0) + ":5050"
 
     new MesosSchedulerDriver(scheduler, framework, masterUrl).run()
   }

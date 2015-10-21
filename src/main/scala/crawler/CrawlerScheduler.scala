@@ -16,7 +16,7 @@ import scala.collection.JavaConverters._
 class CrawlerScheduler extends Scheduler {
   val logger = LoggerFactory.getLogger("CrawlerScheduler")
 
-  val numOfAllTasks = 2
+  val numOfAllTasks = 1
   val taskIDGenerator = new AtomicInteger()
   var numOfFinishedTasks = 0
 
@@ -42,7 +42,7 @@ class CrawlerScheduler extends Scheduler {
     }
 
     if (numOfFinishedTasks >= numOfAllTasks) {
-      logger.info("All tasks finished");
+      logger.info("All tasks finished")
       schedulerDriver.stop()
     }
   }
@@ -58,10 +58,8 @@ class CrawlerScheduler extends Scheduler {
 
       // generate a unique task ID
       val taskId1 = Protos.TaskID.newBuilder().setValue(Integer.toString(taskIDGenerator.incrementAndGet())).build()
-      val taskId2 = Protos.TaskID.newBuilder().setValue(Integer.toString(taskIDGenerator.incrementAndGet())).build()
 
       logger.info("Launching task {}", taskId1.getValue)
-      logger.info("Launching task {}", taskId2.getValue)
 
       val cpus1 = Resource.newBuilder.
         setType(org.apache.mesos.Protos.Value.Type.SCALAR)
@@ -69,13 +67,21 @@ class CrawlerScheduler extends Scheduler {
         .setScalar(org.apache.mesos.Protos.Value.Scalar.newBuilder.setValue(1.0))
         .setRole("*")
         .build
-      val cpus2 = Resource.newBuilder.
+      val mem = Resource.newBuilder.
         setType(org.apache.mesos.Protos.Value.Type.SCALAR)
-        .setName("cpus")
-        .setScalar(org.apache.mesos.Protos.Value.Scalar.newBuilder.setValue(1.0))
+        .setName("mem")
+        .setScalar(org.apache.mesos.Protos.Value.Scalar.newBuilder.setValue(128.0))
         .setRole("*")
         .build
 
+
+//      val command = "java -cp $CRAWLER_DIR/target/SNA-1.0.jar -Djava.library.path=$MESOS_LIBS crawler.CrawlerTaskExecutor "
+      val command = "java -cp /media/sf_Crawler/target/SNA-1.0.jar -Djava.library.path=/usr/local/lib crawler.CrawlerTaskExecutor "
+      val executorInfo = ExecutorInfo.newBuilder()
+        .setCommand(CommandInfo.newBuilder().setValue(command + "Ho"))
+        .setExecutorId(ExecutorID.newBuilder().setValue("" + System.nanoTime()))
+        .addResources(cpus1).addResources(mem)
+        .build()
 
 
       val crawlerTask1 = TaskInfo.newBuilder
@@ -83,19 +89,10 @@ class CrawlerScheduler extends Scheduler {
         .setTaskId(taskId1)
         .addResources(cpus1)
         .setSlaveId(offer.getSlaveId)
-        .setExecutor(getCrawlerExecutor("Hi"))
-        .build
-
-      val crawlerTask2 = TaskInfo.newBuilder
-        .setName("task " + taskId2.getValue)
-        .setTaskId(taskId2)
-        .addResources(cpus2)
-        .setSlaveId(offer.getSlaveId)
-        .setExecutor(getCrawlerExecutor("hello"))
+        .setExecutor(executorInfo)
         .build
 
       tasks.add(crawlerTask1)
-      tasks.add(crawlerTask2)
 
       val filters = Protos.Filters.newBuilder().setRefuseSeconds(1).build()
       schedulerDriver.launchTasks(offer.getId, tasks, filters)
@@ -106,7 +103,7 @@ class CrawlerScheduler extends Scheduler {
   * Mesos can execute only some command
   * It command must be run separately */
   def getCrawlerExecutor(messageForExecutor: String = ""): ExecutorInfo = {
-    val command = "java -cp /home/ubuntu/Crawler/target/SNA-1.0.jar -Djava.library.path=/usr/local/lib crawler.CrawlerTaskExecutor "
+    val command = "java -cp $CRAWLER_DIR/target/SNA-1.0.jar -Djava.library.path=$MESOS_LIBS crawler.CrawlerTaskExecutor "
     ExecutorInfo.newBuilder()
       .setCommand(CommandInfo.newBuilder().setValue(command + messageForExecutor))
       .setExecutorId(ExecutorID.newBuilder().setValue("" + System.nanoTime()))
