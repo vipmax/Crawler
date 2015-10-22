@@ -16,9 +16,10 @@ import scala.collection.JavaConverters._
 class CrawlerScheduler extends Scheduler {
   val logger = LoggerFactory.getLogger("CrawlerScheduler")
 
-  val numOfAllTasks = 1
+  val numOfAllTasks = 10
   val taskIDGenerator = new AtomicInteger()
   var numOfFinishedTasks = 0
+
 
   override def offerRescinded(schedulerDriver: SchedulerDriver, offerID: OfferID): Unit = {}
 
@@ -52,9 +53,9 @@ class CrawlerScheduler extends Scheduler {
 
   override def resourceOffers(schedulerDriver: SchedulerDriver, offers: util.List[Offer]): Unit = {
     logger.info("resourceOffers() with {} offers", offers.size())
+    val tasks: util.List[Protos.TaskInfo] = new util.ArrayList()
 
     for (offer <- offers.asScala) {
-      val tasks: util.List[Protos.TaskInfo] = new util.ArrayList()
 
       // generate a unique task ID
       val taskId1 = Protos.TaskID.newBuilder().setValue(Integer.toString(taskIDGenerator.incrementAndGet())).build()
@@ -67,7 +68,8 @@ class CrawlerScheduler extends Scheduler {
         .setScalar(org.apache.mesos.Protos.Value.Scalar.newBuilder.setValue(1.0))
         .setRole("*")
         .build
-      val mem = Resource.newBuilder.
+
+      val mem1 = Resource.newBuilder.
         setType(org.apache.mesos.Protos.Value.Type.SCALAR)
         .setName("mem")
         .setScalar(org.apache.mesos.Protos.Value.Scalar.newBuilder.setValue(128.0))
@@ -80,23 +82,22 @@ class CrawlerScheduler extends Scheduler {
       val executorInfo = ExecutorInfo.newBuilder()
         .setCommand(CommandInfo.newBuilder().setValue(command + "Ho"))
         .setExecutorId(ExecutorID.newBuilder().setValue("" + System.nanoTime()))
-        .addResources(cpus1).addResources(mem)
+//        .addResources(cpus1).addResources(mem1)
         .build()
 
 
       val crawlerTask1 = TaskInfo.newBuilder
         .setName("task " + taskId1.getValue)
         .setTaskId(taskId1)
-        .addResources(cpus1)
+        .addResources(cpus1).addResources(mem1)
         .setSlaveId(offer.getSlaveId)
         .setExecutor(executorInfo)
         .build
 
       tasks.add(crawlerTask1)
 
-      val filters = Protos.Filters.newBuilder().setRefuseSeconds(1).build()
-      schedulerDriver.launchTasks(offer.getId, tasks, filters)
     }
+    schedulerDriver.launchTasks(offers.asScala.map(_.getId).asJava, tasks)
   }
 
   /*Very important
