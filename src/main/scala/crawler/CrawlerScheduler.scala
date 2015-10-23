@@ -78,7 +78,7 @@ class CrawlerScheduler extends Scheduler {
 
 
 //      val command = "java -cp $CRAWLER_DIR/target/SNA-1.0.jar -Djava.library.path=$MESOS_LIBS crawler.CrawlerTaskExecutor "
-      val command = "java -cp /media/sf_Crawler/target/SNA-1.0.jar -Djava.library.path=/usr/local/lib crawler.CrawlerTaskExecutor "
+val command = "java -cp ~/Crawler/target/SNA-1.0.jar -Djava.library.path=/usr/local/lib crawler.CrawlerTaskExecutor "
       val executorInfo = ExecutorInfo.newBuilder()
         .setCommand(CommandInfo.newBuilder().setValue(command + "Ho"))
         .setExecutorId(ExecutorID.newBuilder().setValue("" + System.nanoTime()))

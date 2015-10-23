@@ -23,18 +23,15 @@ class CrawlerExecutor(args: Array[String]) extends Executor {
   override def registered(driver: ExecutorDriver, executorInfo: ExecutorInfo, frameworkInfo: FrameworkInfo, slaveInfo: SlaveInfo): Unit = {}
 
   override def launchTask(driver: ExecutorDriver, task: TaskInfo): Unit = {
-    new Thread(new Runnable {
-      override def run(): Unit = {
-        driver.sendStatusUpdate(TaskStatus.newBuilder().setTaskId(task.getTaskId).setState(TaskState.TASK_RUNNING).build())
 
-        println(s"Crawler task ${task.getTaskId} is running")
-        println("Got fom master " + args.mkString)
+    driver.sendStatusUpdate(TaskStatus.newBuilder().setTaskId(task.getTaskId).setState(TaskState.TASK_RUNNING).build())
 
-        val data = ByteString.copyFrom(s"result from task ${task.getTaskId.getValue}".getBytes)
-        driver.sendStatusUpdate(TaskStatus.newBuilder().setTaskId(task.getTaskId).setState(TaskState.TASK_FINISHED).setData(data).build())
+    println(s"Crawler task ${task.getTaskId} is running")
+    println("Got fom master " + args.mkString)
 
-      }
-    }).start()
+    val data = ByteString.copyFrom(s"result from task ${task.getTaskId.getValue}".getBytes)
+    driver.sendStatusUpdate(TaskStatus.newBuilder().setTaskId(task.getTaskId).setState(TaskState.TASK_FINISHED).setData(data).build())
+
 
   }
 }

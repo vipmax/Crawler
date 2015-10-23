@@ -3,8 +3,9 @@ package crawler
 import java.io.File
 
 import org.slf4j.LoggerFactory
-import twitter4j.{Query, TwitterFactory}
 import twitter4j.conf.ConfigurationBuilder
+import twitter4j.{Query, TwitterFactory}
+
 import scala.collection.JavaConverters._
 import scala.io.Source
 
@@ -13,21 +14,6 @@ import scala.io.Source
  */
 object TwitterTest {
   val logger = LoggerFactory.getLogger("CrawlerScheduler")
-
-  /*
-  * returns Array[(String, String, String, String)] with  twitter credentials
-  * */
-  def getCredentials() = {
-    new File("/Crawler/resources/twitterCreds")
-      .listFiles()
-      .flatMap(file => {
-      Source.fromFile(file)
-        .getLines()
-        .filter(_.length > 10)
-        .grouped(4)
-        .map(group => (group(0).split("key=")(1), group(1).split("secret=")(1), group(2).split("token=")(1), group(3).split("token_secret=")(1)))
-    })
-  }
 
   def main(args: Array[String]) {
     println("Twitter test")
@@ -61,5 +47,20 @@ object TwitterTest {
     //    println(allDocs.toArray.asScala.mkString("\n"))
 
 
+  }
+
+  /*
+  * returns Array[(String, String, String, String)] with  twitter credentials
+  * */
+  def getCredentials() = {
+    new File("~/Crawler/resources/twitterCreds")
+      .listFiles()
+      .flatMap(file => {
+        Source.fromFile(file)
+          .getLines()
+          .filter(_.length > 10)
+          .grouped(4)
+          .map(group => (group(0).split("key=")(1), group(1).split("secret=")(1), group(2).split("token=")(1), group(3).split("token_secret=")(1)))
+      })
   }
 }
