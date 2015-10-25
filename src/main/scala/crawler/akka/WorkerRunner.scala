@@ -1,22 +1,11 @@
-package crawler
+package crawler.akka
 
 import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 import com.typesafe.config.ConfigFactory
-
-/**
- * Created by Max on 24.10.2015.
- */
-class Master extends Actor with ActorLogging {
-
-  override def receive: Receive = {
-    case "Hi" =>
-      log.warning("Have got Hi *****************************************************")
-  }
-
-}
+import crawler.akka.actors.Worker
 
 
-object StartMaster extends App {
+object WorkerRunner extends App {
   private val config: String = """akka {
       actor {
         provider = "akka.cluster.ClusterActorRefProvider"
@@ -26,7 +15,7 @@ object StartMaster extends App {
         log-remote-lifecycle-events = off
         netty.tcp {
           hostname = "127.0.0.1"
-          port = 2551
+          port = 0
         }
       }
 
@@ -39,7 +28,9 @@ object StartMaster extends App {
       }
     }
                                """
-  val system = ActorSystem("cluster", ConfigFactory.parseString(config))
-  system.actorOf(Props[Master], "master")
+
+
+  val system = ActorSystem("cluster",ConfigFactory.parseString(config))
+  system.actorOf(Props[Worker], "worker")
   system.whenTerminated
 }

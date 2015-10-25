@@ -1,7 +1,8 @@
-package crawler
+package crawler.facebook
 
 import facebook4j.FacebookFactory
 import facebook4j.auth.AccessToken
+
 import scala.collection.JavaConverters._
 
 

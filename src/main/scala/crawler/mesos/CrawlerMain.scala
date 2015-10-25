@@ -1,4 +1,4 @@
-package crawler
+package crawler.mesos
 
 import org.apache.mesos.MesosSchedulerDriver
 import org.apache.mesos.Protos.FrameworkInfo

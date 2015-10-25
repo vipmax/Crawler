@@ -1,11 +1,12 @@
-package crawler
+package crawler.twitter
 
 import java.io.File
 
+import crawler.akka.messages.TaskInfo
 import org.slf4j.LoggerFactory
 import twitter4j._
 import twitter4j.conf.ConfigurationBuilder
-import scala.collection.JavaConverters._
+
 import scala.io.Source
 
 /**
@@ -18,20 +19,21 @@ object TwitterTest {
   * returns Array[(String, String, String, String)] with  twitter credentials
   * */
   def getCredentials() = {
-    new File("/Crawler/resources/twitterCreds")
+    new File("resources/twitterCreds")
       .listFiles()
       .flatMap(file => {
       Source.fromFile(file)
         .getLines()
         .filter(_.length > 10)
         .grouped(4)
-        .map(group => (group(0).split("key=")(1), group(1).split("secret=")(1), group(2).split("token=")(1), group(3).split("token_secret=")(1)))
+        .map(group => new TwitterCredential(group(0).split("key=")(1), group(1).split("secret=")(1), group(2).split("token=")(1), group(3).split("token_secret=")(1)))
     })
   }
 
   def main(args: Array[String]) {
     println("Twitter test")
 
+/*
     val listener = new TwitterListener()
     val credentials = TwitterTest.getCredentials()
     val cb: ConfigurationBuilder = new ConfigurationBuilder
@@ -42,6 +44,7 @@ object TwitterTest {
     val keywords = "NBA"
     fq.track(keywords)
     twitterStream.filter(fq)
+*/
 
 
     //    val mongoClient = MongoClient("localhost", 27017)

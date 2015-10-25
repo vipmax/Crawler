@@ -1,6 +1,6 @@
-package crawler
+package crawler.twitter
 
-import twitter4j.{StallWarning, StatusDeletionNotice, Status, StatusListener}
+import twitter4j.{StallWarning, Status, StatusDeletionNotice, StatusListener}
 
 /**
  * Created by Max on 23.10.2015.

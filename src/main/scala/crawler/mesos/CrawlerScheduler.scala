@@ -1,4 +1,4 @@
-package crawler
+package crawler.mesos
 
 import java.util
 import java.util.concurrent.atomic.AtomicInteger
@@ -16,7 +16,7 @@ import scala.collection.JavaConverters._
 class CrawlerScheduler extends Scheduler {
   val logger = LoggerFactory.getLogger("CrawlerScheduler")
 
-  val numOfAllTasks = 10
+  val numOfAllTasks = 1
   val taskIDGenerator = new AtomicInteger()
   var numOfFinishedTasks = 0
 
@@ -78,11 +78,11 @@ class CrawlerScheduler extends Scheduler {
 
 
 //      val command = "java -cp $CRAWLER_DIR/target/SNA-1.0.jar -Djava.library.path=$MESOS_LIBS crawler.CrawlerTaskExecutor "
-val command = "java -cp ~/Crawler/target/SNA-1.0.jar -Djava.library.path=/usr/local/lib crawler.CrawlerTaskExecutor "
+      val command = "java -cp /home/vagrant/Crawler/target/SNA-1.0.jar -Djava.library.path=/usr/local/lib crawler.CrawlerTaskExecutor "
       val executorInfo = ExecutorInfo.newBuilder()
         .setCommand(CommandInfo.newBuilder().setValue(command + "Ho"))
         .setExecutorId(ExecutorID.newBuilder().setValue("" + System.nanoTime()))
-//        .addResources(cpus1).addResources(mem1)
+        .addResources(cpus1).addResources(mem1)
         .build()
 
 
